@@ -1,0 +1,22 @@
+{
+  "name": "question-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "logger.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.17.0",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "ts-node": "^10.9.2"
+  }
+}
