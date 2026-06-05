@@ -25,7 +25,18 @@ async function getToken() {
 }
 const VALID_STACKS = ["backend", "frontend"];
 const VALID_LEVELS = ["debug", "info", "warn", "error", "fatal"];
-const VALID_PACKAGES = ["cache", "controller", "cron_job", "db", "domain", "handler", "repository", "route", "service"];
+const BACKEND_PACKAGES = ["cache", "controller", "cron_job", "db", "domain", "handler", "repository", "route", "service"];
+const FRONTEND_PACKAGES = ["api", "component", "hook", "page", "state", "style"];
+const SHARED_PACKAGES = ["auth", "config", "middleware", "utils"];
+function isValidPackageForStack(stack, pkg) {
+    if (SHARED_PACKAGES.includes(pkg))
+        return true;
+    if (stack === "backend")
+        return BACKEND_PACKAGES.includes(pkg);
+    if (stack === "frontend")
+        return FRONTEND_PACKAGES.includes(pkg);
+    return false;
+}
 async function Log(stack, level, packageName, message) {
     if (!VALID_STACKS.includes(stack)) {
         console.error(`Invalid stack: "${stack}". Allowed: ${VALID_STACKS.join(", ")}`);
@@ -35,8 +46,8 @@ async function Log(stack, level, packageName, message) {
         console.error(`Invalid level: "${level}". Allowed: ${VALID_LEVELS.join(", ")}`);
         return;
     }
-    if (!VALID_PACKAGES.includes(packageName)) {
-        console.error(`Invalid package: "${packageName}". Allowed: ${VALID_PACKAGES.join(", ")}`);
+    if (!isValidPackageForStack(stack, packageName)) {
+        console.error(`Invalid package "${packageName}" for stack "${stack}".`);
         return;
     }
     try {

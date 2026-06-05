@@ -23,13 +23,23 @@ async function getToken(): Promise<string> {
 
 export type Stack = "backend" | "frontend";
 export type Level = "debug" | "info" | "warn" | "error" | "fatal";
-export type Package =
-  | "cache" | "controller" | "cron_job" | "db"
-  | "domain" | "handler" | "repository" | "route" | "service";
+export type BackendPackage = "cache" | "controller" | "cron_job" | "db" | "domain" | "handler" | "repository" | "route" | "service";
+export type FrontendPackage = "api" | "component" | "hook" | "page" | "state" | "style";
+export type SharedPackage = "auth" | "config" | "middleware" | "utils";
+export type Package = BackendPackage | FrontendPackage | SharedPackage;
 
 const VALID_STACKS: Stack[] = ["backend", "frontend"];
 const VALID_LEVELS: Level[] = ["debug", "info", "warn", "error", "fatal"];
-const VALID_PACKAGES: Package[] = ["cache","controller","cron_job","db","domain","handler","repository","route","service"];
+const BACKEND_PACKAGES: Package[] = ["cache","controller","cron_job","db","domain","handler","repository","route","service"];
+const FRONTEND_PACKAGES: Package[] = ["api","component","hook","page","state","style"];
+const SHARED_PACKAGES: Package[] = ["auth","config","middleware","utils"];
+
+function isValidPackageForStack(stack: Stack, pkg: Package): boolean {
+  if (SHARED_PACKAGES.includes(pkg)) return true;
+  if (stack === "backend") return BACKEND_PACKAGES.includes(pkg);
+  if (stack === "frontend") return FRONTEND_PACKAGES.includes(pkg);
+  return false;
+}
 
 export async function Log(
   stack: Stack,
@@ -45,8 +55,8 @@ export async function Log(
     console.error(`Invalid level: "${level}". Allowed: ${VALID_LEVELS.join(", ")}`);
     return;
   }
-  if (!VALID_PACKAGES.includes(packageName)) {
-    console.error(`Invalid package: "${packageName}". Allowed: ${VALID_PACKAGES.join(", ")}`);
+  if (!isValidPackageForStack(stack, packageName)) {
+    console.error(`Invalid package "${packageName}" for stack "${stack}".`);
     return;
   }
   try {
