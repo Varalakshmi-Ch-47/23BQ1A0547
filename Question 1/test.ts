@@ -1,4 +1,4 @@
-import { Log } from "./logger";
+import { Log } from "./logger.js";
 
 async function main() {
   // Backend-only packages

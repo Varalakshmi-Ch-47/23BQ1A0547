@@ -1,10 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Log = Log;
-const axios_1 = __importDefault(require("axios"));
+import axios from "axios";
 const AUTH_URL = "http://4.224.186.213/evaluation-service/auth";
 const LOG_URL = "http://4.224.186.213/evaluation-service/logs";
 const credentials = {
@@ -19,7 +13,7 @@ let cachedToken = null;
 async function getToken() {
     if (cachedToken)
         return cachedToken;
-    const res = await axios_1.default.post(AUTH_URL, credentials);
+    const res = await axios.post(AUTH_URL, credentials);
     cachedToken = res.data.access_token;
     return cachedToken;
 }
@@ -37,7 +31,7 @@ function isValidPackageForStack(stack, pkg) {
         return FRONTEND_PACKAGES.includes(pkg);
     return false;
 }
-async function Log(stack, level, packageName, message) {
+export async function Log(stack, level, packageName, message) {
     if (!VALID_STACKS.includes(stack)) {
         console.error(`Invalid stack: "${stack}". Allowed: ${VALID_STACKS.join(", ")}`);
         return;
@@ -52,7 +46,7 @@ async function Log(stack, level, packageName, message) {
     }
     try {
         const token = await getToken();
-        await axios_1.default.post(LOG_URL, { stack, level, package: packageName, message }, { headers: { Authorization: `Bearer ${token}` } });
+        await axios.post(LOG_URL, { stack, level, package: packageName, message }, { headers: { Authorization: `Bearer ${token}` } });
         console.log(`[${level.toUpperCase()}] [${stack}/${packageName}] ${message}`);
     }
     catch (err) {
