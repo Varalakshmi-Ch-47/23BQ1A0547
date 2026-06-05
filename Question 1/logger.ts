@@ -23,13 +23,32 @@ async function getToken(): Promise<string> {
 
 export type Stack = "backend" | "frontend";
 export type Level = "debug" | "info" | "warn" | "error" | "fatal";
+export type Package =
+  | "cache" | "controller" | "cron_job" | "db"
+  | "domain" | "handler" | "repository" | "route" | "service";
+
+const VALID_STACKS: Stack[] = ["backend", "frontend"];
+const VALID_LEVELS: Level[] = ["debug", "info", "warn", "error", "fatal"];
+const VALID_PACKAGES: Package[] = ["cache","controller","cron_job","db","domain","handler","repository","route","service"];
 
 export async function Log(
   stack: Stack,
   level: Level,
-  packageName: string,
+  packageName: Package,
   message: string
 ): Promise<void> {
+  if (!VALID_STACKS.includes(stack)) {
+    console.error(`Invalid stack: "${stack}". Allowed: ${VALID_STACKS.join(", ")}`);
+    return;
+  }
+  if (!VALID_LEVELS.includes(level)) {
+    console.error(`Invalid level: "${level}". Allowed: ${VALID_LEVELS.join(", ")}`);
+    return;
+  }
+  if (!VALID_PACKAGES.includes(packageName)) {
+    console.error(`Invalid package: "${packageName}". Allowed: ${VALID_PACKAGES.join(", ")}`);
+    return;
+  }
   try {
     const token = await getToken();
     await axios.post(

@@ -23,7 +23,22 @@ async function getToken() {
     cachedToken = res.data.access_token;
     return cachedToken;
 }
+const VALID_STACKS = ["backend", "frontend"];
+const VALID_LEVELS = ["debug", "info", "warn", "error", "fatal"];
+const VALID_PACKAGES = ["cache", "controller", "cron_job", "db", "domain", "handler", "repository", "route", "service"];
 async function Log(stack, level, packageName, message) {
+    if (!VALID_STACKS.includes(stack)) {
+        console.error(`Invalid stack: "${stack}". Allowed: ${VALID_STACKS.join(", ")}`);
+        return;
+    }
+    if (!VALID_LEVELS.includes(level)) {
+        console.error(`Invalid level: "${level}". Allowed: ${VALID_LEVELS.join(", ")}`);
+        return;
+    }
+    if (!VALID_PACKAGES.includes(packageName)) {
+        console.error(`Invalid package: "${packageName}". Allowed: ${VALID_PACKAGES.join(", ")}`);
+        return;
+    }
     try {
         const token = await getToken();
         await axios_1.default.post(LOG_URL, { stack, level, package: packageName, message }, { headers: { Authorization: `Bearer ${token}` } });
